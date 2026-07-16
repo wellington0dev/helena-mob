@@ -1,0 +1,20 @@
+<ion-menu menuId="main" contentId="main" type="overlay">
+  <ion-content class="side-content">
+    <div class="side">
+      <div class="side-head">
+        <span class="avatar"><ion-icon name="sparkles"></ion-icon></span>
+        <span class="side-title">Helena</span>
+      </div>
+      <nav class="side-nav">
+        @for (item of nav; track item.path) {
+          <ion-menu-toggle auto-hide="false">
+            <a class="nav-item" [routerLink]="item.path" routerLinkActive="active">
+              <ion-icon [name]="item.icon"></ion-icon>
+              <span>{{ item.label }}</span>
+            </a>
+          </ion-menu-toggle>
+        }
+      </nav>
+    </div>
+  </ion-content>
+</ion-menu>

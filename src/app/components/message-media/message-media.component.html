@@ -1,0 +1,44 @@
+@if (loading()) {
+  <div class="loading"><ion-spinner name="crescent"></ion-spinner></div>
+} @else if (url()) {
+  @switch (message.media_type) {
+    @case ('image') {
+      <button type="button" class="img-btn" (click)="openFull()">
+        <img [src]="url()" class="media-image" alt="imagem" />
+        <span class="expand-hint"><ion-icon name="expand-outline"></ion-icon></span>
+      </button>
+    }
+    @case ('audio') {
+      <div class="audio">
+        <button class="play" (click)="toggle()">
+          <ion-icon [name]="playing() ? 'pause-outline' : 'play-outline'"></ion-icon>
+        </button>
+        <div class="bar" (click)="seek($event)">
+          <div class="fill" [style.width.%]="progress()"></div>
+        </div>
+        <span class="time">{{ timeLabel() }}</span>
+        <audio #audio [src]="url()" preload="metadata"
+               (timeupdate)="onTime()" (ended)="onEnded()"
+               (loadedmetadata)="onMeta()"></audio>
+      </div>
+    }
+    @default {
+      <div class="doc">
+        @if (isText()) {
+          <button type="button" class="doc-main" (click)="viewText()">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <span class="name">{{ fileName() }}</span>
+          </button>
+        } @else {
+          <button type="button" class="doc-main" (click)="download()">
+            <ion-icon name="document-outline"></ion-icon>
+            <span class="name">{{ fileName() }}</span>
+          </button>
+        }
+        <button type="button" class="doc-share" (click)="download()" aria-label="Baixar / compartilhar">
+          <ion-icon name="share-outline"></ion-icon>
+        </button>
+      </div>
+    }
+  }
+}

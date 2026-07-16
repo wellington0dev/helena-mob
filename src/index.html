@@ -3,9 +3,21 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Ionic App</title>
+  <title>Helena</title>
 
   <base href="/" />
+
+  <!-- Aplica o tema ANTES do primeiro paint (evita flash do tema errado). -->
+  <script>
+    (function () {
+      try {
+        var pref = localStorage.getItem('helena_theme') || 'system';
+        var dark = pref === 'dark' ||
+          (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      } catch (e) {}
+    })();
+  </script>
 
   <meta name="color-scheme" content="light dark" />
   <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />

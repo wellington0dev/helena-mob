@@ -1,0 +1,55 @@
+<ui-topbar back title="Dados da conversa"></ui-topbar>
+
+<div class="content">
+  @if (loading()) {
+    <div class="center"><span class="dot-spinner"></span></div>
+  } @else {
+    <div class="hero">
+      <div class="avatar glass"><ion-icon name="sparkles"></ion-icon></div>
+      <h1 class="name">Helena</h1>
+      <p class="tagline">Sua assistente pessoal</p>
+    </div>
+
+    <section class="section glass">
+      <div class="info-row">
+        <span class="row-icon"><ion-icon name="calendar-outline"></ion-icon></span>
+        <span class="info-main">
+          <span class="info-sub">Conversa iniciada em</span>
+          <span class="info-value">{{ startedLabel() }}</span>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="row-icon"><ion-icon name="chatbubble-ellipses-outline"></ion-icon></span>
+        <span class="info-main">
+          <span class="info-sub">Mensagens trocadas</span>
+          <span class="info-value">{{ info()?.total_messages ?? 0 }}</span>
+        </span>
+      </div>
+    </section>
+
+    @if (images().length) {
+      <h2 class="group-title">Imagens ({{ images().length }})</h2>
+      <div class="gallery">
+        @for (m of images(); track m.id) {
+          <div class="cell"><app-message-media [message]="m"></app-message-media></div>
+        }
+      </div>
+    }
+
+    @if (files().length) {
+      <h2 class="group-title">Áudios e documentos ({{ files().length }})</h2>
+      <section class="section glass files">
+        @for (m of files(); track m.id) {
+          <div class="file-row"><app-message-media [message]="m"></app-message-media></div>
+        }
+      </section>
+    }
+
+    @if (!info()?.media?.length) {
+      <div class="empty">
+        <ion-icon name="images-outline"></ion-icon>
+        <p>Nenhuma mídia compartilhada ainda.</p>
+      </div>
+    }
+  }
+</div>

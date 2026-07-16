@@ -1,0 +1,14 @@
+@if (lightbox.src(); as src) {
+  <div class="lightbox" (click)="lightbox.close()">
+    <div class="lightbox-bar" (click)="$event.stopPropagation()">
+      <button type="button" class="lb-btn" (click)="download()" aria-label="Baixar imagem">
+        <ion-icon name="download-outline"></ion-icon>
+      </button>
+      <button type="button" class="lb-btn" (click)="lightbox.close()" aria-label="Fechar">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <img [src]="src" class="lightbox-img" alt="imagem em tela cheia"
+         (click)="$event.stopPropagation()" />
+  </div>
+}

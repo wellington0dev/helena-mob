@@ -1,0 +1,197 @@
+@if (activePeer(); as p) {
+  <!-- thread de mensagens com um peer -->
+  <header class="topbar glass">
+    <button class="icon-btn" (click)="closeThread()" aria-label="Voltar">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+    <span class="title">{{ p.label }}</span>
+  </header>
+
+  <div class="content thread">
+    @if (loadingThread()) {
+      <div class="center"><span class="dot-spinner"></span></div>
+    } @else if (!threadMessages().length) {
+      <div class="empty">
+        <ion-icon name="globe-outline"></ion-icon>
+        <p>Nenhuma mensagem ainda. Mande a primeira.</p>
+      </div>
+    }
+    @for (m of threadMessages(); track m.id) {
+      <div class="bubble" [class.out]="m.direction === 'outgoing'">
+        <div class="bubble-body">
+          @if (m.direction === 'outgoing' && m.authored_by === 'ai') {
+            <span class="badge ai-badge">IA</span>
+          }
+          @if (m.kind === 'task_share') {
+            <span class="badge kind-badge">compartilhado</span>
+          } @else if (m.kind === 'help_request') {
+            <span class="badge kind-badge">pedido de ajuda</span>
+          } @else if (m.kind === 'help_response') {
+            <span class="badge kind-badge" [class.verified]="!!m.verified_request_message_id">
+              {{ m.verified_request_message_id ? 'resposta (verificada)' : 'resposta' }}
+            </span>
+          }
+          {{ m.body }}
+        </div>
+        @if (m.direction === 'outgoing') {
+          <span class="status" [class.failed]="m.status === 'failed'">
+            {{ m.status === 'sent' ? 'enviado' : m.status === 'failed' ? 'falhou' : 'enviando…' }}
+          </span>
+        }
+        @if (m.direction === 'incoming' && m.kind === 'help_request') {
+          <button class="btn ghost sm" (click)="replyTo(m)">Responder a este pedido</button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (replyingTo(); as r) {
+    <div class="banner glass reply-banner">
+      <ion-icon name="help-circle-outline"></ion-icon>
+      <span>Respondendo ao pedido de ajuda: "{{ r.body.length > 60 ? (r.body | slice:0:60) + '…' : r.body }}"</span>
+      <button class="icon-btn sm" (click)="cancelReply()" aria-label="Cancelar resposta">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+  }
+
+  <div class="composer glass">
+    <input class="fld" [(ngModel)]="newMessageText" placeholder="Mensagem…"
+           (keyup.enter)="sendMessage()" [disabled]="sendingMessage()" />
+    <button class="icon-btn primary" (click)="sendMessage()" [disabled]="sendingMessage() || !newMessageText.trim()">
+      <ion-icon name="send-outline"></ion-icon>
+    </button>
+  </div>
+} @else {
+  <!-- lista de peers -->
+  <header class="topbar glass">
+    <button class="icon-btn" (click)="openMenu()" aria-label="Menu">
+      <ion-icon name="menu-outline"></ion-icon>
+    </button>
+    <span class="title">Rede</span>
+    <button class="icon-btn" (click)="toggleAdd()" aria-label="Adicionar peer">
+      <ion-icon [name]="addMode() ? 'close' : 'add'"></ion-icon>
+    </button>
+  </header>
+
+  <div class="content">
+    @if (settings(); as s) {
+      @if (s.paused) {
+        <section class="banner warn glass">
+          <ion-icon name="close-circle-outline"></ion-icon>
+          <span>Federação pausada (modo pânico). Peers não recebem nem mandam nada.</span>
+          <button class="btn ghost" (click)="resume()">Reativar</button>
+        </section>
+      } @else if (!s.public_url_configured) {
+        <section class="banner glass">
+          <ion-icon name="help-circle-outline"></ion-icon>
+          <span>FEDERATION_PUBLIC_URL não configurada — você pode receber pareamento, mas não iniciar um.</span>
+        </section>
+      }
+    }
+
+    @if (addMode() === 'choose') {
+      <section class="form glass">
+        <button class="btn primary block" (click)="startGenerate()">
+          <ion-icon name="qr-code-outline"></ion-icon> Gerar código pra alguém
+        </button>
+        <button class="btn ghost block" (click)="startJoin()">
+          <ion-icon name="key-outline"></ion-icon> Inserir código de alguém
+        </button>
+      </section>
+    }
+
+    @if (addMode() === 'generate') {
+      <section class="form glass">
+        <p class="hint">Mande esse código + o endereço do seu Helena pra outra pessoa, por fora (voz, mensagem). Vale por 10 minutos.</p>
+        @if (generating()) {
+          <div class="center"><span class="dot-spinner"></span></div>
+        } @else if (generatedCode(); as g) {
+          <div class="code-display">{{ g.code }}</div>
+          <p class="hint">Expira às {{ g.expires_at | date:'HH:mm' }}.</p>
+        }
+        <div class="form-actions">
+          <button class="btn ghost" (click)="cancelAdd()">Fechar</button>
+        </div>
+      </section>
+    }
+
+    @if (addMode() === 'join') {
+      <section class="form glass">
+        <input class="fld" [(ngModel)]="joinCode" placeholder="Código de pareamento" />
+        <input class="fld" [(ngModel)]="joinUrl" placeholder="URL do Helena dele (https://...)" />
+        <div class="form-actions">
+          <button class="btn ghost" (click)="cancelAdd()">Cancelar</button>
+          <button class="btn primary" (click)="submitJoin()" [disabled]="joining()">Parear</button>
+        </div>
+      </section>
+    }
+
+    @if (editingPeer(); as e) {
+      <section class="form glass">
+        <input class="fld" [(ngModel)]="editLabel" placeholder="Nome" />
+        <select class="fld" [(ngModel)]="editTrust">
+          <option value="a_averiguar">A averiguar</option>
+          <option value="confiavel">Confiável</option>
+          <option value="nao_confiavel">Não confiável</option>
+        </select>
+        <label class="toggle-row">
+          <input type="checkbox" [(ngModel)]="editAiDialogue" [disabled]="editTrust === 'nao_confiavel'" />
+          <span>Deixar a IA responder automaticamente (até um teto de turnos)</span>
+        </label>
+        @if (editTrust === 'nao_confiavel') {
+          <p class="hint">Peer não confiável nunca recebe engajamento autônomo da IA, mesmo com isso ligado.</p>
+        }
+        <label class="toggle-row">
+          <input type="checkbox" [(ngModel)]="editAiCanInitiate" [disabled]="editTrust !== 'confiavel'" />
+          <span>Deixar a IA falar com esse peer por conta própria</span>
+        </label>
+        <p class="hint risk">
+          Isso deixa sua IA mandar informações que ela sabe sobre você — o que descobriu ou
+          fez na conversa, e possivelmente coisas do seu perfil/notas — para esse peer, por
+          iniciativa própria, durante uma conversa (nunca fora dela). Só disponível para
+          peers marcados como Confiável. Tem um limite de frequência (poucos contatos
+          iniciados por hora) e você sempre recebe uma notificação quando isso acontece.
+        </p>
+        @if (editTrust !== 'confiavel') {
+          <p class="hint">Só peers Confiáveis podem receber contato iniciado pela IA.</p>
+        }
+        <div class="form-actions">
+          <button class="btn ghost" (click)="cancelEdit()">Cancelar</button>
+          <button class="btn primary" (click)="saveEdit()">Salvar</button>
+        </div>
+      </section>
+    }
+
+    @if (loading()) {
+      <div class="center"><span class="dot-spinner"></span></div>
+    } @else if (!peers().length && addMode() === null) {
+      <div class="empty">
+        <ion-icon name="globe-outline"></ion-icon>
+        <p>Nenhum peer ainda. Toque em + pra parear com outra Helena.</p>
+      </div>
+    }
+
+    @for (p of peers(); track p.id) {
+      <div class="card glass">
+        <button class="card-main" (click)="openThread(p)">
+          <div class="card-head">
+            <span class="name">{{ p.label }}</span>
+            <span class="badge" [class]="p.trust_level">{{ trustLabel[p.trust_level] }}</span>
+            @if (p.ai_dialogue_enabled) {
+              <span class="badge ai-badge">IA auto</span>
+            }
+            @if (p.ai_can_initiate) {
+              <span class="badge ai-badge initiate">IA pode iniciar</span>
+            }
+          </div>
+          <div class="desc">{{ p.remote_base_url }}</div>
+        </button>
+        <div class="card-actions">
+          <button class="icon-btn sm" (click)="editPeer(p)" aria-label="Editar"><ion-icon name="create-outline"></ion-icon></button>
+          <button class="icon-btn sm danger" (click)="removePeer(p)" aria-label="Remover"><ion-icon name="trash-outline"></ion-icon></button>
+        </div>
+      </div>
+    }
+  </div>
+}

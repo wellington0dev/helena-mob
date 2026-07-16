@@ -1,0 +1,61 @@
+.text-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-lightbox);
+  background: var(--scrim);
+  display: flex;
+  flex-direction: column;
+  animation: fade-up var(--dur-2) var(--ease);
+}
+
+.tv-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: calc(var(--sp-3) + env(safe-area-inset-top)) var(--sp-3) var(--sp-3);
+
+  .tv-name {
+    flex: 1;
+    min-width: 0;
+    color: #fff;
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.tv-btn {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease);
+
+  ion-icon { font-size: var(--fs-lg); }
+  &:active { background: rgba(255, 255, 255, 0.28); }
+}
+
+.tv-content {
+  flex: 1;
+  margin: 0 var(--sp-3) calc(var(--sp-3) + env(safe-area-inset-bottom));
+  padding: var(--sp-4);
+  overflow: auto;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  color: var(--text);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  -webkit-overflow-scrolling: touch;
+}

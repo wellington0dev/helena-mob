@@ -1,0 +1,13 @@
+<div class="seg glass" role="radiogroup" aria-label="Tema">
+  @for (o of options; track o.key) {
+    <button
+      class="seg-item"
+      [class.active]="pref() === o.key"
+      [attr.aria-checked]="pref() === o.key"
+      role="radio"
+      (click)="set(o.key)">
+      <ion-icon [name]="o.icon"></ion-icon>
+      <span>{{ o.label }}</span>
+    </button>
+  }
+</div>

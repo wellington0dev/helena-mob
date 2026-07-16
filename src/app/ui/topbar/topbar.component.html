@@ -1,0 +1,9 @@
+<header class="topbar glass">
+  @if (back) {
+    <button class="icon-btn" (click)="goBack()" aria-label="Voltar">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+  }
+  <h1 class="title">{{ title }}</h1>
+  <div class="right"><ng-content></ng-content></div>
+</header>

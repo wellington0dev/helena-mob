@@ -1,27 +1,57 @@
-
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonListHeader, IonNote, IonMenuToggle, IonItem, IonIcon, IonLabel, IonRouterOutlet, IonRouterLink } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, heartOutline, heartSharp, archiveOutline, archiveSharp, trashOutline, trashSharp, warningOutline, warningSharp, bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
+import { Component, inject } from '@angular/core';
+import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { Capacitor } from '@capacitor/core';
+import { App } from '@capacitor/app';
+import { AuthService } from './core/auth.service';
+import { NotificationSync } from './core/notification-sync';
+import { HelenaNotifications } from './core/helena-notifications';
+import { getApiBase } from './core/api-base';
+import { Theme } from './core/theme';
+import { LightboxComponent } from './components/lightbox/lightbox.component';
+import { TextViewerComponent } from './components/text-viewer/text-viewer.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
-  imports: [RouterLink, RouterLinkActive, IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonListHeader, IonNote, IonMenuToggle, IonItem, IonIcon, IonLabel, IonRouterLink, IonRouterOutlet],
+  template:
+    '<ion-app><app-sidebar></app-sidebar><ion-router-outlet id="main"></ion-router-outlet>' +
+    '<app-lightbox></app-lightbox><app-text-viewer></app-text-viewer></ion-app>',
+  imports: [IonApp, IonRouterOutlet, LightboxComponent, TextViewerComponent, SidebarComponent],
 })
 export class AppComponent {
-  public appPages = [
-    { title: 'Inbox', url: '/folder/inbox', icon: 'mail' },
-    { title: 'Outbox', url: '/folder/outbox', icon: 'paper-plane' },
-    { title: 'Favorites', url: '/folder/favorites', icon: 'heart' },
-    { title: 'Archived', url: '/folder/archived', icon: 'archive' },
-    { title: 'Trash', url: '/folder/trash', icon: 'trash' },
-    { title: 'Spam', url: '/folder/spam', icon: 'warning' },
-  ];
-  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+  private auth = inject(AuthService);
+  private notif = inject(NotificationSync);
+  private theme = inject(Theme); // inicializa o tema (aplica data-theme + status bar)
+
   constructor() {
-    addIcons({ mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, heartOutline, heartSharp, archiveOutline, archiveSharp, trashOutline, trashSharp, warningOutline, warningSharp, bookmarkOutline, bookmarkSharp });
+    if (Capacitor.isNativePlatform()) {
+      this.initNative();
+    }
+  }
+
+  private async initNative() {
+    await this.notif.requestPermissions();
+    this.syncIfLoggedIn();
+    // re-sincroniza ao voltar pro app (pega novas notificações da fila)
+    App.addListener('resume', () => this.syncIfLoggedIn());
+  }
+
+  private async syncIfLoggedIn() {
+    if (!this.auth.isLoggedIn()) return;
+    // injeta as credenciais no nativo p/ o BroadcastReceiver responder (Nível B)
+    try {
+      await HelenaNotifications.setAuth({
+        baseUrl: getApiBase(),
+        token: this.auth.token!,
+        userId: String(this.auth.user()?.id ?? ''),
+      });
+    } catch {
+      /* plugin indisponível / sem token */
+    }
+    try {
+      await this.notif.sync();
+    } catch {
+      /* 401 é tratado pelo interceptor; outros erros são silenciosos */
+    }
   }
 }

@@ -1,0 +1,85 @@
+:host {
+  display: contents;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-5);
+  height: 52px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  font-family: var(--font);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform var(--dur-1) var(--ease),
+    box-shadow var(--dur-2) var(--ease),
+    background var(--dur-2) var(--ease),
+    opacity var(--dur-2) var(--ease);
+
+  &.block {
+    display: flex;
+    width: 100%;
+  }
+
+  &[data-size='sm'] {
+    height: 40px;
+    padding: 0 var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+}
+
+/* Primary: accent com texto ESCURO (contraste no cyan claro) + glow */
+.btn[data-variant='primary'] {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--on-accent);
+  box-shadow: 0 6px 18px var(--accent-soft), var(--shadow-sm);
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 10px 26px var(--accent-ring), var(--shadow-md);
+  }
+}
+
+/* Glass: superfície translúcida */
+.btn[data-variant='glass'] {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border-color: var(--glass-border);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Ghost: sem fundo */
+.btn[data-variant='ghost'] {
+  background: transparent;
+  color: var(--text-muted);
+
+  &:hover:not(:disabled) {
+    color: var(--text);
+    background: var(--accent-soft);
+  }
+}
+
+.btn-spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-full);
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: spin 0.7s linear infinite;
+}

@@ -1,0 +1,151 @@
+.loading {
+  padding: 8px;
+}
+
+.img-btn {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+
+  .expand-hint {
+    position: absolute;
+    right: var(--sp-2);
+    bottom: var(--sp-2);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-full);
+    background: var(--scrim);
+    color: #fff;
+    opacity: 0;
+    transition: opacity var(--dur-2) var(--ease);
+
+    ion-icon { font-size: var(--fs-md); }
+  }
+
+  &:active .expand-hint { opacity: 1; }
+}
+
+.media-image {
+  max-width: 100%;
+  border-radius: var(--r-sm);
+  display: block;
+}
+
+.audio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px;
+
+  .play {
+    background: var(--ion-color-primary);
+    color: #fff;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  .bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(127, 127, 127, .35);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .fill {
+    height: 100%;
+    background: var(--ion-color-primary);
+    border-radius: 2px;
+  }
+
+  .time {
+    font-size: .75rem;
+    opacity: .7;
+    flex-shrink: 0;
+    min-width: 34px;
+    text-align: right;
+  }
+}
+
+.doc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+
+  .doc-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .doc-share {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: var(--r-full);
+    background: rgba(127, 127, 127, 0.14);
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .name {
+    flex: 1;
+    word-break: break-all;
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+/* No balão do usuário (fundo primário), inverte as cores do player para
+   contrastar — senão o botão primário some no fundo primário. */
+:host-context(.bubble.mine) {
+  .audio .play {
+    background: var(--ion-color-primary-contrast, #fff);
+    color: var(--ion-color-primary);
+  }
+  .audio .bar {
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .audio .fill {
+    background: var(--ion-color-primary-contrast, #fff);
+  }
+  .audio .time {
+    color: var(--ion-color-primary-contrast, #fff);
+    opacity: 0.85;
+  }
+}

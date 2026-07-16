@@ -1,0 +1,14 @@
+<button
+  class="btn"
+  [attr.data-variant]="variant"
+  [attr.data-size]="size"
+  [class.block]="block"
+  [class.is-loading]="loading"
+  [disabled]="disabled || loading"
+  [type]="type">
+  @if (loading) {
+    <span class="btn-spinner" aria-hidden="true"></span>
+  } @else {
+    <ng-content></ng-content>
+  }
+</button>

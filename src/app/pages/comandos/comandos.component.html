@@ -1,0 +1,50 @@
+<header class="topbar glass">
+  <button class="icon-btn" (click)="openMenu()" aria-label="Menu">
+    <ion-icon name="menu-outline"></ion-icon>
+  </button>
+  <span class="title">Comandos</span>
+  <button class="icon-btn" (click)="novo()" aria-label="Novo comando">
+    <ion-icon name="add"></ion-icon>
+  </button>
+</header>
+
+<div class="content">
+  @if (editing(); as e) {
+    <section class="form glass">
+      <input class="fld" [(ngModel)]="e.name" placeholder="Nome (ex.: Workspace 3)" />
+      <input class="fld" [(ngModel)]="e.description" placeholder="Descrição (opcional)" />
+      <textarea class="fld mono" rows="3" [(ngModel)]="e.command"
+                placeholder="Comando shell (use && ou nova linha para vários)"></textarea>
+      <div class="form-actions">
+        <button class="btn ghost" (click)="cancelar()">Cancelar</button>
+        <button class="btn primary" (click)="salvar()" [disabled]="saving()">Salvar</button>
+      </div>
+    </section>
+  }
+
+  @if (loading()) {
+    <div class="center"><span class="dot-spinner"></span></div>
+  } @else if (!items().length && !editing()) {
+    <div class="empty">
+      <ion-icon name="terminal-outline"></ion-icon>
+      <p>Nenhum comando salvo. Toque em + para criar.</p>
+    </div>
+  }
+
+  @for (c of items(); track c.id) {
+    <div class="card glass">
+      <div class="card-main">
+        <div class="card-head">
+          <span class="name">{{ c.name }}</span>
+          @if (c.created_by === 'ai') { <span class="badge">IA</span> }
+        </div>
+        @if (c.description) { <div class="desc">{{ c.description }}</div> }
+        <pre class="cmd">{{ c.command }}</pre>
+      </div>
+      <div class="card-actions">
+        <button class="icon-btn sm" (click)="editar(c)" aria-label="Editar"><ion-icon name="create-outline"></ion-icon></button>
+        <button class="icon-btn sm danger" (click)="apagar(c)" aria-label="Apagar"><ion-icon name="trash-outline"></ion-icon></button>
+      </div>
+    </div>
+  }
+</div>

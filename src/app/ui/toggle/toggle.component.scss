@@ -1,0 +1,42 @@
+:host {
+  display: inline-block;
+}
+
+.toggle {
+  width: 52px;
+  height: 30px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+
+  .knob {
+    width: 22px;
+    height: 22px;
+    border-radius: var(--r-full);
+    background: var(--text-faint);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--dur-2) var(--ease-spring), background var(--dur-2) var(--ease);
+  }
+
+  &.on {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-color: transparent;
+
+    .knob {
+      transform: translateX(22px);
+      background: var(--on-accent);
+    }
+  }
+
+  &:active .knob {
+    transform: scale(0.9);
+  }
+  &.on:active .knob {
+    transform: translateX(22px) scale(0.9);
+  }
+}

@@ -1,2 +1,114 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+/* =====================================================================
+   Design tokens da Helena — glassmorphism suave, accent #11daf5.
+   Valores que mudam com o tema = CSS custom properties (trocam em runtime).
+   Componentes referenciam SÓ estes tokens (nunca literais).
+   ===================================================================== */
+
+:root {
+  /* ---- Accent (base; leve ajuste por tema abaixo) ---- */
+  --accent: #11daf5;
+  --accent-2: #12a7f0;            /* gradiente/realce */
+  --on-accent: #052430;          /* #11daf5 é cyan claro → texto ESCURO sobre ele */
+  --accent-soft: rgba(17, 218, 245, 0.14);
+  --accent-ring: rgba(17, 218, 245, 0.45);
+
+  /* ---- Raios ---- */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 30px;
+  --r-full: 999px;
+
+  /* ---- Espaçamento ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-8: 48px;
+
+  /* ---- Tipografia ---- */
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-md: 16px;
+  --fs-lg: 19px;
+  --fs-xl: 24px;
+  --fs-2xl: 30px;
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ---- Glass ---- */
+  --glass-blur: 16px;
+
+  /* ---- Movimento ---- */
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 380ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* ---- z-index ---- */
+  --z-topbar: 10;
+  --z-modal: 100;
+  --z-lightbox: 200;
+
+  /* ================= TEMA CLARO (default) ================= */
+  --bg: #e6edf4;
+  --bg-glow-1: rgba(17, 218, 245, 0.38);
+  --bg-glow-2: rgba(124, 92, 255, 0.26);
+  --surface: #ffffff;
+  --surface-2: #f2f6fa;
+  --glass-bg: rgba(255, 255, 255, 0.60);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 8px 32px rgba(15, 45, 65, 0.14);
+  --text: #0d1b26;
+  --text-muted: #55697a;
+  --text-faint: #90a4b3;
+  --border: rgba(15, 45, 65, 0.10);
+  --shadow-sm: 0 1px 3px rgba(15, 45, 65, 0.10);
+  --shadow-md: 0 6px 20px rgba(15, 45, 65, 0.12);
+  --shadow-lg: 0 16px 44px rgba(15, 45, 65, 0.18);
+  --bubble-in: rgba(255, 255, 255, 0.70);
+  --overlay: rgba(10, 25, 40, 0.35);
+  --scrim: rgba(5, 12, 20, 0.88);
+}
+
+/* ================= TEMA ESCURO ================= */
+:root[data-theme='dark'] {
+  --accent-soft: rgba(17, 218, 245, 0.16);
+  --bg: #070e17;
+  --bg-glow-1: rgba(17, 218, 245, 0.26);
+  --bg-glow-2: rgba(116, 84, 244, 0.28);
+  --surface: #0f1c29;
+  --surface-2: #16283a;
+  --glass-bg: rgba(24, 40, 58, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --text: #e8f0f6;
+  --text-muted: #93a7b6;
+  --text-faint: #5f7688;
+  --border: rgba(255, 255, 255, 0.10);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.40);
+  --shadow-lg: 0 16px 44px rgba(0, 0, 0, 0.55);
+  --bubble-in: rgba(28, 44, 60, 0.65);
+  --overlay: rgba(0, 0, 0, 0.55);
+  --scrim: rgba(0, 0, 0, 0.92);
+}
+
+/* Mapeia as vars do Ionic para os tokens — enquanto páginas ainda usam ion-*
+   (durante a migração), elas herdam o tema em vez do visual padrão do Ionic. */
+:root {
+  --ion-background-color: var(--bg);
+  --ion-text-color: var(--text);
+  --ion-color-primary: var(--accent);
+  --ion-color-primary-contrast: var(--on-accent);
+  --ion-color-medium: var(--text-muted);
+  --ion-color-danger: #ff4d5e;
+  --ion-font-family: var(--font);
+}

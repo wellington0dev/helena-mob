@@ -1,0 +1,141 @@
+<ui-topbar back title="Configurações"></ui-topbar>
+
+<div class="content">
+  <!-- Aparência -->
+  <section class="section glass">
+    <h2 class="sec-title">Aparência</h2>
+    <div class="theme-wrap">
+      <ui-theme-toggle></ui-theme-toggle>
+    </div>
+  </section>
+
+  <!-- Conta -->
+  <section class="section glass">
+    <h2 class="sec-title">Conta</h2>
+    <button class="row" (click)="editName()">
+      <span class="row-icon"><ion-icon name="person-outline"></ion-icon></span>
+      <span class="row-main"><span class="row-label">Nome</span></span>
+      <span class="row-right">
+        <span class="row-value">{{ auth.user()?.name || 'definir' }}</span>
+        <ion-icon name="chevron-forward-outline" class="chev"></ion-icon>
+      </span>
+    </button>
+    <div class="row">
+      <span class="row-icon"><ion-icon name="at-outline"></ion-icon></span>
+      <span class="row-main"><span class="row-label">Email</span></span>
+      <span class="row-right"><span class="row-value">{{ auth.user()?.email || '—' }}</span></span>
+    </div>
+    <button class="row" (click)="logout()">
+      <span class="row-icon"><ion-icon name="log-out-outline"></ion-icon></span>
+      <span class="row-main"><span class="row-label">Sair</span></span>
+    </button>
+  </section>
+
+  <!-- Servidor -->
+  <section class="section glass">
+    <h2 class="sec-title">Servidor</h2>
+    <button class="row" (click)="editServerUrl()">
+      <span class="row-icon"><ion-icon name="server-outline"></ion-icon></span>
+      <span class="row-main">
+        <span class="row-label">Endereço da IA</span>
+        <span class="row-sub">{{ serverUrl() }}</span>
+      </span>
+      <span class="row-right"><ion-icon name="chevron-forward-outline" class="chev"></ion-icon></span>
+    </button>
+  </section>
+
+  <!-- Notificações -->
+  <section class="section glass">
+    <h2 class="sec-title">Notificações</h2>
+    <div class="row">
+      <span class="row-icon"><ion-icon name="moon-outline"></ion-icon></span>
+      <span class="row-main"><span class="row-label">Horário silencioso</span></span>
+      <span class="row-right">
+        <ui-toggle [(ngModel)]="quietEnabled" (ngModelChange)="savePrefs()"></ui-toggle>
+      </span>
+    </div>
+    @if (quietEnabled) {
+      <div class="row times">
+        <ui-field label="Início" type="time" [(ngModel)]="quietStart" (enter)="savePrefs()"></ui-field>
+        <ui-field label="Fim" type="time" [(ngModel)]="quietEnd" (enter)="savePrefs()"></ui-field>
+      </div>
+    }
+  </section>
+
+  <!-- Comandos confiáveis (permitir sempre) -->
+  @if (trustedCommands().length) {
+    <section class="section glass">
+      <h2 class="sec-title">Comandos confiáveis</h2>
+      <p class="sec-hint">
+        Estes comandos exatos a Helena roda sem pedir permissão. Revogue para voltar a perguntar.
+      </p>
+      @for (c of trustedCommands(); track c.id) {
+        <div class="row trusted">
+          <span class="row-icon"><ion-icon name="terminal-outline"></ion-icon></span>
+          <span class="row-main">
+            <span class="row-label cmd">{{ c.command }}</span>
+          </span>
+          <button class="revoke" (click)="revokeTrusted(c.id)" aria-label="Revogar">
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- Navegação -->
+  @if (installedBrowsers().length) {
+    <section class="section glass">
+      <h2 class="sec-title">Navegação</h2>
+      <button class="row" (click)="editDefaultBrowser()">
+        <span class="row-icon"><ion-icon name="globe-outline"></ion-icon></span>
+        <span class="row-main">
+          <span class="row-label">Navegador padrão</span>
+          <span class="row-sub">Usado quando a Helena precisa navegar na web por você.</span>
+        </span>
+        <span class="row-right">
+          <span class="row-value">{{ defaultBrowserLabel() }}</span>
+          <ion-icon name="chevron-forward-outline" class="chev"></ion-icon>
+        </span>
+      </button>
+    </section>
+  }
+
+  <!-- Segurança -->
+  <section class="section glass">
+    <h2 class="sec-title">Segurança</h2>
+    <button class="row" (click)="confirmPanic()">
+      <span class="row-icon danger"><ion-icon name="warning-outline"></ion-icon></span>
+      <span class="row-main">
+        <span class="row-label danger">Modo pânico</span>
+        <span class="row-sub">Revoga todas as permissões da Helena na hora (kill switch).</span>
+      </span>
+    </button>
+  </section>
+
+  <!-- Dados -->
+  <section class="section glass">
+    <h2 class="sec-title">Dados</h2>
+    <button class="row" (click)="confirmResetChat()">
+      <span class="row-icon warn"><ion-icon name="refresh-outline"></ion-icon></span>
+      <span class="row-main">
+        <span class="row-label">Recomeçar chat</span>
+        <span class="row-sub">Apaga as mensagens. Mantém memória e agenda.</span>
+      </span>
+    </button>
+    <button class="row" (click)="confirmResetContext()">
+      <span class="row-icon warn"><ion-icon name="trash-outline"></ion-icon></span>
+      <span class="row-main">
+        <span class="row-label">Apagar chat + contexto</span>
+        <span class="row-sub">Apaga mensagens, memória e perfil. Mantém a agenda.</span>
+      </span>
+    </button>
+    <button class="row" (click)="confirmWipe()">
+      <span class="row-icon danger"><ion-icon name="warning-outline"></ion-icon></span>
+      <span class="row-main">
+        <span class="row-label danger">Limpar dados da conta</span>
+        <span class="row-sub">Apaga tudo, inclusive arquivos. Opção de excluir a conta.</span>
+      </span>
+    </button>
+  </section>
+</div>

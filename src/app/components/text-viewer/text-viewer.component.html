@@ -1,0 +1,14 @@
+@if (viewer.text(); as text) {
+  <div class="text-viewer">
+    <div class="tv-bar">
+      <span class="tv-name">{{ viewer.name() }}</span>
+      <button type="button" class="tv-btn" (click)="share()" aria-label="Baixar / compartilhar">
+        <ion-icon name="share-outline"></ion-icon>
+      </button>
+      <button type="button" class="tv-btn" (click)="viewer.close()" aria-label="Fechar">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <pre class="tv-content">{{ text }}</pre>
+  </div>
+}

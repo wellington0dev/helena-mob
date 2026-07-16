@@ -1,0 +1,40 @@
+<div class="login">
+  <div class="theme-row">
+    <ui-theme-toggle></ui-theme-toggle>
+  </div>
+
+  <div class="hero">
+    <div class="logo glass">
+      <ion-icon name="sparkles"></ion-icon>
+    </div>
+    <h1 class="brand">Helena</h1>
+    <p class="tagline">
+      {{ mode() === 'login' ? 'Que bom te ver de novo' : 'Vamos nos conhecer' }}
+    </p>
+  </div>
+
+  <div class="card glass">
+    @if (mode() === 'register') {
+      <ui-field label="Nome" [(ngModel)]="name" placeholder="como quer ser chamado(a)"></ui-field>
+    }
+    <ui-field label="Email" type="email" [(ngModel)]="email" autocomplete="email"
+              placeholder="seu@email.com"></ui-field>
+    <ui-field label="Senha" type="password" [(ngModel)]="password"
+              autocomplete="current-password" placeholder="sua senha"
+              (enter)="submit()"></ui-field>
+
+    @if (error()) {
+      <p class="err">{{ error() }}</p>
+    }
+
+    <ui-button variant="primary" block [loading]="loading()" (click)="submit()">
+      {{ mode() === 'login' ? 'Entrar' : 'Criar conta' }}
+    </ui-button>
+  </div>
+
+  <ui-button variant="ghost" block (click)="toggle()">
+    {{ mode() === 'login' ? 'Não tem conta? Cadastre-se' : 'Já tenho conta' }}
+  </ui-button>
+
+  <button class="server-link" (click)="editServerUrl()">Servidor</button>
+</div>

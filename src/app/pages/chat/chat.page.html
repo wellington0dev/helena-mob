@@ -1,0 +1,127 @@
+<header class="topbar glass">
+  <button class="icon-btn" (click)="openMenu()" aria-label="Menu">
+    <ion-icon name="menu-outline"></ion-icon>
+  </button>
+  <button class="title-btn" (click)="openProfile()">
+    <span class="avatar"><ion-icon name="sparkles"></ion-icon></span>
+    <span class="title-text">
+      <span class="name">Helena</span>
+      <span class="status">sua assistente</span>
+    </span>
+  </button>
+</header>
+
+<div class="messages" #scroll>
+  @if (loadingHistory()) {
+    <div class="center"><span class="dot-spinner"></span></div>
+  }
+  @if (loadError()) {
+    <div class="load-error">
+      Não consegui carregar o histórico.
+      <button class="retry" (click)="retry()">Tentar de novo</button>
+    </div>
+  }
+
+  @for (m of messages(); track m.id) {
+    @if (m.tool_name === 'shell_denied') {
+      <!-- contexto interno da negativa: não renderiza -->
+    } @else if (m.tool_name === 'shell_request') {
+      <div class="row">
+        <div class="bubble shell-request">
+          <div class="sr-head">
+            <ion-icon name="terminal-outline"></ion-icon>
+            Permissão para rodar um comando
+          </div>
+          @if (m.media_meta?.['motivo']) {
+            <div class="sr-motivo">{{ m.media_meta!['motivo'] }}</div>
+          }
+          <pre class="sr-cmd">{{ m.media_meta?.['command'] }}</pre>
+          @if ((m.media_meta?.['status'] ?? 'pending') === 'pending') {
+            <div class="sr-actions">
+              <button class="sr-btn allow" (click)="decide(m, 'allow')">Permitir</button>
+              <button class="sr-btn deny" (click)="decide(m, 'deny')">Negar</button>
+              <button class="sr-btn always" (click)="decide(m, 'always')">Sempre</button>
+            </div>
+          } @else {
+            <div class="sr-decided" [class.denied]="m.media_meta?.['status'] === 'denied'">
+              {{ m.media_meta?.['status'] === 'denied' ? 'Negado' : 'Permitido' }}
+            </div>
+          }
+        </div>
+      </div>
+    } @else if (m.tool_name === 'shell_output') {
+      <div class="row">
+        <div class="bubble shell-output"><pre>{{ m.content }}</pre></div>
+      </div>
+    } @else {
+      <div class="row" [class.mine]="m.role === 'user'">
+        <div class="bubble" [class.mine]="m.role === 'user'">
+          @if (m.media_url) { <app-message-media [message]="m"></app-message-media> }
+          @if (m.content) { <div class="text">{{ m.content }}</div> }
+        </div>
+      </div>
+    }
+  }
+
+  @for (line of progress(); track $index) {
+    <div class="row">
+      <div class="bubble progress">
+        <span class="progress-dot"></span>
+        <span class="progress-text">{{ line }}</span>
+      </div>
+    </div>
+  }
+
+  @if (thinking()) {
+    <div class="row">
+      <div class="bubble typing">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  }
+</div>
+
+<footer class="composer-wrap">
+  @if (pending()) {
+    <div class="attach-chip glass">
+      <ion-icon name="document-outline"></ion-icon>
+      <span>{{ pending()!.name }}</span>
+      <button class="chip-x" (click)="clearAttach()"><ion-icon name="close"></ion-icon></button>
+    </div>
+  }
+
+  @if (recording()) {
+    <div class="composer glass recording">
+      <button class="icon-btn danger" (click)="cancelRecording()" aria-label="Cancelar">
+        <ion-icon name="trash"></ion-icon>
+      </button>
+      <div class="rec-info"><span class="rec-dot"></span>{{ recTimeLabel() }}</div>
+      <button class="send-btn" (click)="stopAndSend()" aria-label="Enviar">
+        <ion-icon name="send"></ion-icon>
+      </button>
+    </div>
+  } @else {
+    <div class="composer glass">
+      <input #fileInput type="file" hidden
+             accept="image/*,audio/*,.pdf,.docx,.xlsx,.txt"
+             (change)="onFile($event)" />
+      <button class="icon-btn" (click)="fileInput.click()" [disabled]="thinking()" aria-label="Anexar">
+        <ion-icon name="add"></ion-icon>
+      </button>
+      <textarea #ta class="ta" rows="1" [(ngModel)]="draft"
+                placeholder="Fala com a Helena..."
+                (input)="autoGrow()" (keydown.enter)="onEnter($event)"></textarea>
+      @if (draft.trim() || pending()) {
+        <button class="send-btn" (click)="send()" [disabled]="thinking() || uploading()" aria-label="Enviar">
+          @if (uploading()) { <span class="dot-spinner sm"></span> }
+          @else { <ion-icon name="send"></ion-icon> }
+        </button>
+      } @else {
+        <button class="send-btn" (click)="startRecording()" [disabled]="thinking() || uploading()" aria-label="Gravar">
+          @if (uploading()) { <span class="dot-spinner sm"></span> }
+          @else { <ion-icon name="mic"></ion-icon> }
+        </button>
+      }
+    </div>
+  }
+</footer>

@@ -1,0 +1,96 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: transparent; // deixa os blobs do app-bg aparecerem atrás do glass
+}
+
+.login {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sp-4);
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: calc(var(--sp-8) + env(safe-area-inset-top)) var(--sp-5)
+    calc(var(--sp-6) + env(safe-area-inset-bottom))
+    var(--sp-5);
+}
+
+.theme-row {
+  position: absolute;
+  top: calc(var(--sp-4) + env(safe-area-inset-top));
+  left: var(--sp-5);
+  right: var(--sp-5);
+}
+
+.hero {
+  text-align: center;
+  animation: fade-up var(--dur-3) var(--ease) both;
+}
+
+.logo {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto var(--sp-4);
+  border-radius: var(--r-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+
+  ion-icon {
+    font-size: 44px;
+  }
+}
+
+.brand {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--text);
+}
+
+.tagline {
+  color: var(--text-muted);
+  margin: var(--sp-1) 0 0;
+  font-size: var(--fs-md);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+  border-radius: var(--r-lg);
+  animation: fade-up var(--dur-3) var(--ease) 60ms both;
+}
+
+.err {
+  margin: 0;
+  padding-left: var(--sp-1);
+  color: var(--ion-color-danger);
+  font-size: var(--fs-sm);
+}
+
+.server-link {
+  align-self: center;
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  font-family: var(--font);
+  font-size: var(--fs-sm);
+  padding: var(--sp-2);
+  cursor: pointer;
+  transition: color var(--dur-2) var(--ease);
+
+  &:hover {
+    color: var(--text-muted);
+  }
+}

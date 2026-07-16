@@ -1,0 +1,13 @@
+<label class="field">
+  @if (label) { <span class="field-label">{{ label }}</span> }
+  <input
+    class="field-input"
+    [type]="type"
+    [placeholder]="placeholder"
+    [attr.autocomplete]="autocomplete"
+    [value]="value()"
+    [disabled]="disabled()"
+    (input)="onInput($event)"
+    (blur)="markTouched()"
+    (keyup.enter)="enter.emit()" />
+</label>
