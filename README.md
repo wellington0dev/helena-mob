@@ -30,7 +30,7 @@ npm start
 # ou: ionic serve
 ```
 
-O app abre em `http://localhost:4200` e conversa com o backend através da URL configurada em [`src/environments/environment.ts`](src/environments/environment.ts).
+O app abre em `http://localhost:8100` e conversa com o backend através da URL configurada em [`src/environments/environment.ts`](src/environments/environment.ts).
 
 ## Compilando para produção (web)
 
