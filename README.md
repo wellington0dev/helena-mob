@@ -61,39 +61,56 @@ O app usa Capacitor para empacotar como app nativo Android.
 
 ### Conectando o app Android ao backend local
 
-Como o `helena-ai` roda na máquina do usuário (não em produção na nuvem), ao testar em um dispositivo/emulador Android é preciso expor a porta do backend para o dispositivo, por exemplo via ADB:
+Por padrão, um build nativo tenta falar com `127.0.0.1:5000` (a própria máquina do dispositivo), o que só funciona de fato via emulador/ADB reverse. Para testar em um dispositivo/emulador Android apontando para o backend rodando no seu PC, há duas opções:
 
-```bash
-adb reverse tcp:5000 tcp:5000
-```
+- **ADB reverse** (mantém o app usando o endereço padrão `127.0.0.1`):
 
-Isso faz o app no dispositivo enxergar `127.0.0.1:5000` como o backend rodando no seu PC (ver [`src/environments/environment.ts`](src/environments/environment.ts) para a URL usada em builds nativos).
+  ```bash
+  adb reverse tcp:5000 tcp:5000
+  ```
+
+  Isso faz o app no dispositivo enxergar `127.0.0.1:5000` como se fosse o backend do próprio PC.
+
+- **Apontar direto pro IP da máquina na LAN**, editando o endereço do servidor dentro do próprio app (ver seção seguinte) — sem precisar de ADB nem de rebuild.
+
+## Configurando a URL do servidor (backend)
+
+A URL do `helena-ai` **não é fixa no build**: ela é configurável em tempo de execução, direto pela interface do app, e fica salva no dispositivo (`localStorage`, via [`src/app/core/api-base.ts`](src/app/core/api-base.ts)). Não é necessário editar código nem recompilar para trocar de servidor.
+
+Onde configurar:
+
+- **Tela de login**: há um atalho para abrir "Endereço do servidor" e informar a URL do `helena-ai` antes mesmo de autenticar ([`login.page.ts`](src/app/pages/login/login.page.ts)).
+- **Configurações → Servidor**: já autenticado, em [`/settings`](src/app/pages/settings/settings.page.ts) é possível ver e trocar a URL a qualquer momento; ao salvar, o app reconecta o socket e reaponta as notificações nativas automaticamente para o novo endereço.
+
+Se o campo for deixado em branco, o app volta a usar o valor padrão de fábrica, que **é** definido em tempo de build:
+
+- [`src/environments/environment.ts`](src/environments/environment.ts) — `apiUrl`/`apiUrlNative` usados em desenvolvimento (`ng serve`)
+- [`src/environments/environment.prod.ts`](src/environments/environment.prod.ts) — usados no build de produção (`ng build`)
+
+`apiUrl` é o padrão para a versão web e `apiUrlNative` para o app empacotado (Android). Editar esses arquivos só faz sentido se você quiser mudar o *padrão de fábrica* do app — o uso normal é configurar a URL direto na tela de login/configurações.
 
 ## Acessando a Helena fora da rede local (VPN)
 
-Como o `helena-ai` roda na máquina pessoal do usuário, por padrão ele só é acessível quando o app está na mesma rede local (Wi-Fi/LAN). Para usar o app fora de casa (dados móveis, outra rede etc.), uma opção simples é criar uma VPN mesh com o [Tailscale](https://tailscale.com/):
+Como o `helena-ai` roda na máquina pessoal do usuário, por padrão ele só é acessível quando o dispositivo está na mesma rede local (Wi-Fi/LAN). Para usar o app fora de casa (dados móveis, outra rede etc.), uma opção simples é criar uma VPN mesh com o [Tailscale](https://tailscale.com/):
 
 1. Instale o Tailscale na máquina onde o `helena-ai` roda e no dispositivo/celular onde o app cliente será usado, e faça login na mesma conta/tailnet em ambos.
 2. Anote o IP Tailscale (ou o [MagicDNS](https://tailscale.com/kb/1081/magicdns) name, ex. `minha-maquina.tailXXXX.ts.net`) da máquina que roda o backend — algo como `100.x.y.z`.
-3. Aponte o app cliente para esse endereço em vez de `localhost`/`127.0.0.1`, ajustando `apiUrl`/`apiUrlNative` em [`src/environments/environment.ts`](src/environments/environment.ts) (ou `environment.prod.ts` para builds de produção), por exemplo:
-
-   ```ts
-   apiUrl: 'http://100.x.y.z:5000',
-   apiUrlNative: 'http://100.x.y.z:5000',
-   ```
-
-4. Gere o build novamente (`npm run build` e, se for Android, `npx cap sync android`) para que a nova URL seja empacotada no app.
+3. No app, abra a tela de login (ou Configurações → Servidor, se já estiver logado) e informe esse endereço, ex. `http://100.x.y.z:5000`. Não é preciso recompilar: a mudança é salva no dispositivo na hora.
 
 Com isso, o dispositivo consegue falar com o backend `helena-ai` através do túnel do Tailscale de qualquer lugar, sem precisar expor a porta 5000 diretamente na internet. Vale lembrar que essa configuração é só do lado do cliente — o `helena-ai` também precisa estar acessível/rodando na máquina com o Tailscale ativo (ver documentação do [repositório principal](https://github.com/wellington0dev/helena-ai.git)).
 
-## Configuração da URL da API
+## Páginas do app
 
-As URLs do backend estão em:
+O app é uma SPA Angular com rotas standalone ([`src/app/app.routes.ts`](src/app/app.routes.ts)), todas protegidas por `authGuard` exceto `/login`. A navegação entre elas é feita pelo menu lateral (`ion-menu`).
 
-- [`src/environments/environment.ts`](src/environments/environment.ts) — desenvolvimento
-- [`src/environments/environment.prod.ts`](src/environments/environment.prod.ts) — produção
-
-Ajuste `apiUrl` (web) e `apiUrlNative` (app nativo) conforme o endereço onde o `helena-ai` estiver rodando.
+- **`/login`** — [`login.page.ts`](src/app/pages/login/login.page.ts): tela de entrada/cadastro (email e senha). Também é onde dá pra configurar a URL do servidor `helena-ai` antes de autenticar.
+- **`/chat`** — [`chat.page.ts`](src/app/pages/chat/chat.page.ts): tela principal, o chat com a Helena. Envia texto, arquivos e áudio (gravação estilo WhatsApp), mostra o histórico da conversa e recebe respostas em tempo real via Socket.IO — inclusive feedback de progresso de jobs longos rodando em segundo plano e pedidos de confirmação quando a Helena quer executar um comando no PC (permitir/negar/sempre permitir).
+- **`/comandos`** — [`comandos.component.ts`](src/app/pages/comandos/comandos.component.ts): biblioteca de comandos de shell salvos pelo usuário (criar, editar, apagar), para reaproveitar/pedir à Helena depois.
+- **`/listas`** — [`listas.component.ts`](src/app/pages/listas/listas.component.ts): rotinas — sequências de passos (ex.: comandos de shell) que podem ser reordenados, editados e disparados como uma lista única.
+- **`/atividade`** — [`atividade.component.ts`](src/app/pages/atividade/atividade.component.ts): log de auditoria das ações que a Helena executou na máquina (histórico com data/hora).
+- **`/rede`** — [`rede.component.ts`](src/app/pages/rede/rede.component.ts): federação entre instâncias da Helena — parear com outra máquina/usuário (via QR/código), gerenciar nível de confiança de cada peer e trocar mensagens com eles em uma thread própria.
+- **`/settings`** — [`settings.page.ts`](src/app/pages/settings/settings.page.ts): configurações da conta — endereço do servidor, nome do usuário, preferências de notificação (modo silencioso), navegador padrão para tarefas de navegação da Helena, comandos confiados (aprovados permanentemente), "modo pânico" (revoga todas as permissões da Helena na hora), reset de chat/contexto, limpeza de dados e logout.
+- **`/profile`** — [`profile.page.ts`](src/app/pages/profile/profile.page.ts): visão geral da conversa — data de início do chat e galeria de imagens/arquivos trocados com a Helena.
 
 ## Testes
 
