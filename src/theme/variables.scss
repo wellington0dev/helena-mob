@@ -57,6 +57,10 @@
   --z-modal: 100;
   --z-lightbox: 200;
 
+  /* ---- Layout responsivo ---- */
+  /* breakpoint desktop web = quando o ion-split-pane (app.component) vira rail fixo (when="lg", 992px) */
+  --content-max: 800px;
+
   /* ================= TEMA CLARO (default) ================= */
   --bg: #e6edf4;
   --bg-glow-1: rgba(17, 218, 245, 0.38);

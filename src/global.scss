@@ -83,3 +83,39 @@ ion-app {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ---- Desktop web (>= 992px, mesmo breakpoint do ion-split-pane "lg") ----
+   As páginas foram desenhadas para mobile (colunas full-width). Aqui a gente
+   centraliza esse mesmo conteúdo numa coluna de leitura confortável em vez de
+   esticar tudo até a borda da tela — e esconde o botão de menu, já que a
+   sidebar fica fixa (rail) nesse breakpoint. */
+/* ion-split-pane reserva o espaço da rail sozinho, via --side-*, sem olhar
+   pro --width/--max-width que a gente já seta em ion-menu (aqueles só valem
+   pro painel deslizante do modo mobile/overlay). Sem isso o split-pane abre
+   um espaço de até 28% da tela pro "lado", só que o menu-inner some do resto
+   (por causa do --max-width lá embaixo), sobrando um vão vazio entre a
+   sidebar e o conteúdo. */
+ion-split-pane {
+  --side-width: 300px;
+  --side-min-width: 300px;
+  --side-max-width: 300px;
+}
+
+@media (min-width: 992px) {
+  /* !important: precisa vencer especificidade de regras aninhadas tipo
+     `.topbar .icon-btn` que cada página define para o próprio layout mobile. */
+  [aria-label='Menu'] {
+    display: none !important;
+  }
+
+  .topbar,
+  .content,
+  .messages,
+  .composer-wrap,
+  .composer,
+  .banner {
+    width: 100%;
+    max-width: var(--content-max);
+    margin-inline: auto;
+  }
+}

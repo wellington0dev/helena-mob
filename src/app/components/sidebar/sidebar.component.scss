@@ -1,8 +1,14 @@
+:host {
+  display: contents;
+}
+
 ion-menu {
   --width: 74vw;
   --max-width: 300px;
 }
 .side-content {
+
+  width: 100%;
   --background: transparent;
 }
 .side {

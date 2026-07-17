@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/angular/standalone';
 import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { AuthService } from './core/auth.service';
@@ -14,12 +14,14 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 @Component({
   selector: 'app-root',
   template:
-    '<ion-app><app-sidebar></app-sidebar><ion-router-outlet id="main"></ion-router-outlet>' +
-    '<app-lightbox></app-lightbox><app-text-viewer></app-text-viewer></ion-app>',
-  imports: [IonApp, IonRouterOutlet, LightboxComponent, TextViewerComponent, SidebarComponent],
+    '<ion-app><ion-split-pane contentId="main" when="lg">' +
+    '@if (auth.isLoggedIn()) { <app-sidebar></app-sidebar> }' +
+    '<ion-router-outlet id="main"></ion-router-outlet>' +
+    '</ion-split-pane><app-lightbox></app-lightbox><app-text-viewer></app-text-viewer></ion-app>',
+  imports: [IonApp, IonRouterOutlet, IonSplitPane, LightboxComponent, TextViewerComponent, SidebarComponent],
 })
 export class AppComponent {
-  private auth = inject(AuthService);
+  protected auth = inject(AuthService);
   private notif = inject(NotificationSync);
   private theme = inject(Theme); // inicializa o tema (aplica data-theme + status bar)
 
