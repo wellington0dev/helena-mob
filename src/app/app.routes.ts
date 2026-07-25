@@ -29,11 +29,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/atividade/atividade.component').then((m) => m.AtividadeComponent),
   },
   {
-    path: 'rede',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/rede/rede.component').then((m) => m.RedeComponent),
-  },
-  {
     path: 'settings',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/settings/settings.page').then((m) => m.SettingsPage),

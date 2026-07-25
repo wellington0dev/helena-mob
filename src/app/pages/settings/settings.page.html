@@ -22,8 +22,8 @@
     </button>
     <div class="row">
       <span class="row-icon"><ion-icon name="at-outline"></ion-icon></span>
-      <span class="row-main"><span class="row-label">Email</span></span>
-      <span class="row-right"><span class="row-value">{{ auth.user()?.email || '—' }}</span></span>
+      <span class="row-main"><span class="row-label">Usuário</span></span>
+      <span class="row-right"><span class="row-value">{{ auth.user()?.username || '—' }}</span></span>
     </div>
     <button class="row" (click)="logout()">
       <span class="row-icon"><ion-icon name="log-out-outline"></ion-icon></span>

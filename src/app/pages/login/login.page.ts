@@ -22,9 +22,8 @@ export class LoginPage {
   private router = inject(Router);
   private alertCtrl = inject(AlertController);
 
-  email = '';
+  username = '';
   password = '';
-  name = '';
   mode = signal<'login' | 'register'>('login');
   loading = signal(false);
   error = signal<string | null>(null);
@@ -47,21 +46,22 @@ export class LoginPage {
   }
 
   async submit() {
-    if (!this.email.trim() || !this.password) {
-      this.error.set('Preencha email e senha.');
+    const username = this.username.trim().toLowerCase();
+    if (!username || !this.password) {
+      this.error.set('Preencha usuário e senha.');
       return;
     }
-    if (this.mode() === 'register' && !this.name.trim()) {
-      this.error.set('Preencha seu nome.');
+    if (this.mode() === 'register' && !/^[a-z0-9._-]{3,40}$/.test(username)) {
+      this.error.set('Usuário: 3 a 40 caracteres — letras minúsculas, números, ponto, hífen ou underscore.');
       return;
     }
     this.loading.set(true);
     this.error.set(null);
     try {
       if (this.mode() === 'login') {
-        await this.auth.login(this.email.trim(), this.password);
+        await this.auth.login(username, this.password);
       } else {
-        await this.auth.register(this.name.trim(), this.email.trim(), this.password);
+        await this.auth.register(username, this.password);
       }
       await this.router.navigateByUrl('/chat');
     } catch (e: any) {

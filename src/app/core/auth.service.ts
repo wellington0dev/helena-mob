@@ -32,16 +32,16 @@ export class AuthService {
     this.user.set(res.user);
   }
 
-  async login(email: string, password: string): Promise<void> {
+  async login(username: string, password: string): Promise<void> {
     const res = await firstValueFrom(
-      this.http.post<AuthResponse>(`${this.api}/auth/login`, { email, password }),
+      this.http.post<AuthResponse>(`${this.api}/auth/login`, { username, password }),
     );
     this.persist(res);
   }
 
-  async register(name: string, email: string, password: string): Promise<void> {
+  async register(username: string, password: string): Promise<void> {
     const res = await firstValueFrom(
-      this.http.post<AuthResponse>(`${this.api}/auth/register`, { name, email, password }),
+      this.http.post<AuthResponse>(`${this.api}/auth/register`, { username, password }),
     );
     this.persist(res);
   }

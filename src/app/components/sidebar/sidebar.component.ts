@@ -4,7 +4,7 @@ import { IonMenu, IonMenuToggle, IonContent, IonIcon } from '@ionic/angular/stan
 import { addIcons } from 'ionicons';
 import {
   chatbubbleEllipsesOutline, terminalOutline, listOutline, settingsOutline,
-  personOutline, sparkles, pulseOutline, globeOutline,
+  personOutline, sparkles, pulseOutline,
 } from 'ionicons/icons';
 
 /** Gaveta de navegação (ion-menu) estilizada com os tokens do app. */
@@ -21,7 +21,6 @@ export class SidebarComponent {
     { path: '/comandos', label: 'Comandos', icon: 'terminal-outline' },
     { path: '/listas', label: 'Listas', icon: 'list-outline' },
     { path: '/atividade', label: 'Atividade', icon: 'pulse-outline' },
-    { path: '/rede', label: 'Rede', icon: 'globe-outline' },
     { path: '/settings', label: 'Configurações', icon: 'settings-outline' },
     { path: '/profile', label: 'Perfil', icon: 'person-outline' },
   ];
@@ -29,7 +28,7 @@ export class SidebarComponent {
   constructor() {
     addIcons({
       chatbubbleEllipsesOutline, terminalOutline, listOutline, settingsOutline,
-      personOutline, sparkles, pulseOutline, globeOutline,
+      personOutline, sparkles, pulseOutline,
     });
   }
 }

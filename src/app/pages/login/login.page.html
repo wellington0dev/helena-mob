@@ -14,11 +14,8 @@
   </div>
 
   <div class="card glass">
-    @if (mode() === 'register') {
-      <ui-field label="Nome" [(ngModel)]="name" placeholder="como quer ser chamado(a)"></ui-field>
-    }
-    <ui-field label="Email" type="email" [(ngModel)]="email" autocomplete="email"
-              placeholder="seu@email.com"></ui-field>
+    <ui-field label="Usuário" [(ngModel)]="username" autocomplete="username"
+              placeholder="seu_usuario"></ui-field>
     <ui-field label="Senha" type="password" [(ngModel)]="password"
               autocomplete="current-password" placeholder="sua senha"
               (enter)="submit()"></ui-field>

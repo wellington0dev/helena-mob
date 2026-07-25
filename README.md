@@ -103,12 +103,11 @@ Com isso, o dispositivo consegue falar com o backend `helena-ai` através do tú
 
 O app é uma SPA Angular com rotas standalone ([`src/app/app.routes.ts`](src/app/app.routes.ts)), todas protegidas por `authGuard` exceto `/login`. A navegação entre elas é feita pelo menu lateral (`ion-menu`).
 
-- **`/login`** — [`login.page.ts`](src/app/pages/login/login.page.ts): tela de entrada/cadastro (email e senha). Também é onde dá pra configurar a URL do servidor `helena-ai` antes de autenticar.
+- **`/login`** — [`login.page.ts`](src/app/pages/login/login.page.ts): tela de entrada/cadastro (usuário único e senha). Também é onde dá pra configurar a URL do servidor `helena-ai` antes de autenticar.
 - **`/chat`** — [`chat.page.ts`](src/app/pages/chat/chat.page.ts): tela principal, o chat com a Helena. Envia texto, arquivos e áudio (gravação estilo WhatsApp), mostra o histórico da conversa e recebe respostas em tempo real via Socket.IO — inclusive feedback de progresso de jobs longos rodando em segundo plano e pedidos de confirmação quando a Helena quer executar um comando no PC (permitir/negar/sempre permitir).
 - **`/comandos`** — [`comandos.component.ts`](src/app/pages/comandos/comandos.component.ts): biblioteca de comandos de shell salvos pelo usuário (criar, editar, apagar), para reaproveitar/pedir à Helena depois.
 - **`/listas`** — [`listas.component.ts`](src/app/pages/listas/listas.component.ts): rotinas — sequências de passos (ex.: comandos de shell) que podem ser reordenados, editados e disparados como uma lista única.
 - **`/atividade`** — [`atividade.component.ts`](src/app/pages/atividade/atividade.component.ts): log de auditoria das ações que a Helena executou na máquina (histórico com data/hora).
-- **`/rede`** — [`rede.component.ts`](src/app/pages/rede/rede.component.ts): federação entre instâncias da Helena — parear com outra máquina/usuário (via QR/código), gerenciar nível de confiança de cada peer e trocar mensagens com eles em uma thread própria.
 - **`/settings`** — [`settings.page.ts`](src/app/pages/settings/settings.page.ts): configurações da conta — endereço do servidor, nome do usuário, preferências de notificação (modo silencioso), navegador padrão para tarefas de navegação da Helena, comandos confiados (aprovados permanentemente), "modo pânico" (revoga todas as permissões da Helena na hora), reset de chat/contexto, limpeza de dados e logout.
 - **`/profile`** — [`profile.page.ts`](src/app/pages/profile/profile.page.ts): visão geral da conversa — data de início do chat e galeria de imagens/arquivos trocados com a Helena.
 

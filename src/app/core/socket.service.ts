@@ -4,7 +4,6 @@ import { io, Socket } from 'socket.io-client';
 import { getApiBase } from './api-base';
 import { AuthService } from './auth.service';
 import { ChatMessage } from './models';
-import { Peer, PeerMessage } from './federation';
 
 /** Conexão Socket.IO para resultados assíncronos (background jobs). */
 @Injectable({ providedIn: 'root' })
@@ -19,10 +18,6 @@ export class SocketService {
   readonly newMessages = new Subject<ChatMessage[]>();
   /** Feedback contínuo de um job iterativo em andamento (ao vivo, efêmero). */
   readonly jobProgress = new Subject<string>();
-  /** Mensagem nova recebida de um peer federado. */
-  readonly peerMessage = new Subject<PeerMessage>();
-  /** Um peer novo acabou de ser pareado. */
-  readonly peerPaired = new Subject<Peer>();
 
   connect() {
     const token = this.auth.token;
@@ -48,12 +43,6 @@ export class SocketService {
     });
     this.socket.on('job_progress', (data: { text: string }) => {
       if (data?.text) this.jobProgress.next(data.text);
-    });
-    this.socket.on('peer_message', (data: { message: PeerMessage }) => {
-      if (data?.message) this.peerMessage.next(data.message);
-    });
-    this.socket.on('peer_paired', (data: { peer: Peer }) => {
-      if (data?.peer) this.peerPaired.next(data.peer);
     });
   }
 
